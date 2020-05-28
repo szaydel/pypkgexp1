@@ -1,6 +1,6 @@
 import unittest
 
-from pypkgexp1.lib.box import Box, BoxKeyError, BoxKeyValidationError
+from pypkgexp1.lib.box import Box, BoxKeyError, BoxKeyValidationError, BoxUnknownKeyError
 
 # Unit tests here could be a convenient way of testing the library code.
 class TestBoxModule(unittest.TestCase):
@@ -27,7 +27,8 @@ class TestBoxModule(unittest.TestCase):
         # All keys in bads should be absent from our box. If any are found
         # this test is a failure.
         for (key, value) in bads:
-            self.assertIsNone(b.get(key))
+            with self.assertRaises(BoxUnknownKeyError):
+                b.get(key)
         #
         # Positive test
         #
@@ -62,7 +63,8 @@ class TestBoxModule(unittest.TestCase):
         # All keys in bads should be absent from our box. If any are found
         # this test is a failure.
         for (key, value) in bads:
-            self.assertIsNone(b.get(key))
+            with self.assertRaises(BoxUnknownKeyError):
+                b.get(key)
         #
         # Positive test
         #
@@ -83,6 +85,20 @@ class TestBoxModule(unittest.TestCase):
             with self.assertRaises(BoxKeyError):
                 b.update_item("beba9t.ru9kns.39fcon", v)
 
+    def test_remove_item(self):
+        items = (
+            ("yjygca.m2jf1e.qiaja5", "7"),
+            ("k63gcm.g0vywh.f1y2ex", "13"),
+            ("beba9t.ru9kns.39fcon", "107"),
+        )
+        b = Box()
+        for key, value in items:
+            b.insert_item(key, value)
+            self.assertIn(key, b)
+
+        for key, value in items:
+            b.remove_item(key)
+            self.assertNotIn(key, b)
 
 if __name__ == "__main__":
     unittest.main()

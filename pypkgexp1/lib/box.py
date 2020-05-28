@@ -13,9 +13,15 @@ class BoxKeyValidationError(Exception):
     pass
 
 
+class BoxUnknownKeyError(Exception):
+    pass
+
 class Box:
     def __init__(self):
         self._dict = {}
+
+    def __iter__(self):
+        return self._dict.__iter__()
 
     def _key_validation(self, key):
         """
@@ -114,7 +120,7 @@ class Box:
         [1, 3, 7, 9]
         """
         if not key in self._dict:
-            return None
+            raise BoxUnknownKeyError("Given key does not exist in this box", {"unknown_key": key})
         return self._dict[key]
 
     def rename_key(self, oldkey, newkey):
@@ -138,7 +144,7 @@ class Box:
             del self._dict[oldkey]
             return True
 
-    def remove_key(self, key):
+    def remove_item(self, key):
         """
         Removes item from box associated with given key.
 
@@ -146,7 +152,7 @@ class Box:
         >>> pairs = [("a.0", 1), ("a.1", 3), ("a.2", 7), ("a.3", 9)]
         >>> for k, v in pairs:
         ...     try:
-        ...         b.remove_key(k)
+        ...         b.remove_item(k)
         ...     except BoxKeyError as e:
         ...         print(f"{k}: {e}")
         a.0: cannot remote non-existing key
