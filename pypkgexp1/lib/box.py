@@ -183,6 +183,17 @@ class Box:
     def keys(self):
         """
         Returns a sequence of keys currently in the box.
+        >>> b = Box()
+        >>> b.keys
+        dict_keys([])
+        >>> b.insert_item('a.b', 1)
+        True
+        >>> b.insert_item('c.d', 2)
+        True
+        >>> b.insert_item('e.f', 3)
+        True
+        >>> b.keys
+        dict_keys(['a.b', 'c.d', 'e.f'])
         """
         return self._dict.keys()
 
