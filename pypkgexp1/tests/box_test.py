@@ -2,7 +2,7 @@ import unittest
 
 from pypkgexp1.lib.box import Box, BoxKeyError, BoxKeyValidationError, BoxUnknownKeyError
 
-# Unit tests here could be a convenient way of testing the library code.
+# Normally, we should have a single class for 
 class TestBoxModule(unittest.TestCase):
     def test_insert_items_int(self):
         goods = [
@@ -40,7 +40,7 @@ class TestBoxModule(unittest.TestCase):
             self.assertIsNotNone(b.get(key))
             self.assertEqual(b.get(key), value)
 
-    def test_insert_item_string(self):
+    def test_insert_items_string(self):
         goods = (
             ("yjygca.m2jf1e.qiaja5", "7"),
             ("k63gcm.g0vywh.f1y2ex", "13"),
@@ -50,6 +50,18 @@ class TestBoxModule(unittest.TestCase):
             ("3dd54u.a6iys9.5tcpc2", "61"),
             ("81198a.8eoom0.jr84if", "19"),
             ("9j2lqa.058tun.3mooy7", "89"),
+        )
+
+    def test_insert_items_tuple(self):
+        goods = (
+            ("yjygca.m2jf1e.qiaja5", (1, "alpha")),
+            ("k63gcm.g0vywh.f1y2ex", (2, "beta")),
+            ("beba9t.ru9kns.39fcon", (3, "gamma")),
+        )
+        bads = (
+            ("3dd54u.a6iys9.5tcpc2", (1, "alpha")),
+            ("81198a.8eoom0.jr84if", (2, "beta")),
+            ("9j2lqa.058tun.3mooy7", (3, "gamma")),
         )
 
         b = Box()
@@ -74,7 +86,7 @@ class TestBoxModule(unittest.TestCase):
         # this test is a failure.
         for (key, value) in goods:
             self.assertIsNotNone(b.get(key))
-            self.assertEqual(b.get(key), value)
+            self.assertTupleEqual(b.get(key), value)
 
     def test_update_item(self):
         bads = ("521", 521, True, None)

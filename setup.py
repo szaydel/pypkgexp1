@@ -4,18 +4,18 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="sz-pypkgexp1", # Replace with your own username
+    name="pypkgexp1-skel", # Replace with your desired name
     version="0.0.1",
-    author="Sam",
+    author="Sam Zaydel",
     author_email="szaydel@corelight.com",
-    description="An example package as a pattern for Corelight",
+    description="A skeleton Python package meant to be a pattern for Corelight",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://internal",
     packages=setuptools.find_packages(),
     entry_points={
         "console_scripts": [
-            "driver = pypkgexp1.cli:main_func"
+            "pypkgexp1-cli = pypkgexp1.cli:main_func"
         ],
     },
     test_suite="pypkgexp1.tests.box_test",

@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-if __name__ == "__main__":
-    from lib.box import Box, BoxKeyError, BoxKeyValidationError
-else:
-    from .lib.box import Box, BoxKeyError, BoxKeyValidationError
+from pypkgexp1.lib.box import Box, BoxKeyError, BoxKeyValidationError, BoxUnknownKeyError
 
 # Main is an entrypoint used by setuptools to tie the name of wrapper script
-# that it creates for our Command Line program without the ``.py`` extension.
-# We should not have any business logic here, instead, this is really just the
-# driver for our library.
+# that it creates for our Command Line program without the ``.py`` extension to
+# the code we would normally want to run the program was invoked. This assumes
+# that we are building a command line utility and not just a library.
+# If we are only building and packing a library, this is unnecessary.
+# We should not have any business logic here, that belongs in the library. This
+# makes testing easier in general, because it reduces or eliminates any need to
+# test the main entrypoint.
+#
+# When this main_func is called, it is effectively referenced as:
+# pypkgexp1.cli.main_func.
 def main_func():
     b = Box()
     b.insert_item("letter.alpha", "α")
@@ -42,11 +46,14 @@ class TestBoxModule(unittest.TestCase):
         # Negative test
         #
         for (key, value) in bads:
-            b.insert_item(key, value)
+            # Validate that expected assertion is raised on error.
+            with self.assertRaises(BoxKeyValidationError):
+                b.insert_item(key, value)
         # All keys in bads should be absent from our box. If any are found
         # this test is a failure.
         for (key, value) in bads:
-            self.assertIsNone(b.get(key))
+            with self.assertRaises(BoxUnknownKeyError):
+                b.get(key)
         #
         # Positive test
         #
@@ -75,11 +82,14 @@ class TestBoxModule(unittest.TestCase):
         # Negative test
         #
         for (key, value) in bads:
-            b.insert_item(key, value)
+            # Validate that expected assertion is raised on error.
+            with self.assertRaises(BoxKeyValidationError):
+                b.insert_item(key, value)
         # All keys in bads should be absent from our box. If any are found
         # this test is a failure.
         for (key, value) in bads:
-            self.assertIsNone(b.get(key))
+            with self.assertRaises(BoxUnknownKeyError):
+                b.get(key)
         #
         # Positive test
         #
@@ -100,9 +110,27 @@ class TestBoxModule(unittest.TestCase):
             with self.assertRaises(BoxKeyError):
                 b.update_item("beba9t.ru9kns.39fcon", v)
 
+    def test_remove_item(self):
+        items = (
+            ("yjygca.m2jf1e.qiaja5", "7"),
+            ("k63gcm.g0vywh.f1y2ex", "13"),
+            ("beba9t.ru9kns.39fcon", "107"),
+        )
+        b = Box()
+        for key, value in items:
+            b.insert_item(key, value)
+            self.assertIn(key, b)
+
+        for key, value in items:
+            b.remove_item(key)
+            self.assertNotIn(key, b)
+
 
 if __name__ == "pypkgexp1.cli":
-    print("🚀 Launched from REPL or command line with setuptools-generated script")
+    print("🚀 Launched from REPL, command line or 'python -m unittest ...'")
 
+# This will not run when called from the command line because setuptools
+# installs a custom script which makes sure that the main function is called
+# effectively like: pypkgexp1.cli.main_func
 if __name__ == "__main__":
     unittest.main()
